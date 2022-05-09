@@ -1,0 +1,223 @@
+---
+output: pdf_document
+---
+
+**Esta tarea es para “crédito adicional”. Realice los siguientes ejercicios por equipo.**
+
+**1. Resuelva los ejercicios 12.2 y 12.3. Realice estos con ayuda de su laboratorista y entregue las soluciones a máquina, utilizando LateX [2 horas, 2 puntos cada ejercicio]**
+
+**2. Estudie la inflación y la política monetaria en México siguiendo estos pasos: [2 horas, 1.5 puntos cada inciso]. Por favor documente su trabajo para que se pueda replicar.**
+
+**(a) Obtenga datos de las inflaciones ANUALES general y subyacente (del Índice Nacional de Precios al Consumidor) de México, por lo menos desde 1980, datos del desempleo a nivel nacional en México, y datos de la tasa de interés a corto plazo de México, todos a frecuencia MENSUAL, y grafíquelos individualmente.**
+
+**(b) Produzca una tabla de estadísticas descriptivas de estos datos, incluyendo medias, varianzas y autocorrelaciones, para todo el periodo para el que tenga datos y para dos subperiodos, antes y después del año 1999.**
+
+
+**(c) Una “regla de Taylor” es una función que define a la tasa de interés de corto plazo del periodo t en términos de la distancia entre la inflación y su objetivo y del desempleo y su objetivo en el periodo t-1 (y de una constante). Asuma que el objetivo de inflación es 3% y tome el objetivo de desempleo como 3% y estime los coeficientes de una regla de Taylor para México para tres grupos de datos: el periodo completo para el que tenga datos, y los dos sub-periodos definidos anteriormente. Estime las regresiones con la inflación general y con la subyacente. (John Taylor famosamente empezó por decir que era sólamente una relación empírica – positiva –, y ya que se hizo famosa su regla, empezó a decir que debería usarse como regla para la deter- minación de la tasa de interés de política – normativa.)**
+
+**(d) Interprete los resultados de las regresiones, en general, y a la luz de la adopción en México de un régimen de objetivos de inflación en el año 1999. (En realidad, el objetivo de inflación, fue 3% solamente a partir de 2003 cuando se volvió "la meta permanente".)**
+
+**3) Estudie el efecto de cambios en la tasa de interés de México sobre la curva de tasas de interés: [2 horas, 1.5 puntos cada inciso]. Por favor documente su trabajo para que se pueda replicar.**
+
+**(a) Obtenga datos de la tasa de interés de referencia del Banco de México, y datos de las tasas de interés en pesos a distintos plazos, 28 días, 1 año, 2 años, 5 años, 10 años. Nótese que están disponibles en distintos periodos cada una.**
+
+Se utilizaron las siguientes series del SIE de Banxico.
+
+```{r, echo=FALSE}
+Tasa <- c('Tasa objetivo', 'CETES 28 días', 'CETES 1 año', 
+           'Bonos 3 años', 'Bonos 5 años',
+           'Bonos 10 años')
+Serie <- c('SF61745', 'SF43936', 'SF43945', 'SF43883',
+           'SF43886', 'SF44071')
+tipificacion <- data.frame(Tasa, Serie)
+knitr::kable(tipificacion, caption = 'Tasa de interés')
+```
+
+Se presenta parte del conjunto de datos que se construyó.
+
+```{r, echo=FALSE, message=FALSE}
+# Abrir sesión en API banxico
+tkn <- "8bd93af99a69ac4062f645fd43e0b517c5c88bb17750149a9fce21e47f8264af"
+siebanxicor::setToken(tkn)
+series <- siebanxicor::getSeriesData(Serie, '2009-07-01','2022-03-01')
+j = 1
+for (i in match(names(series),Serie)) {
+  a <- data.frame(series[[j]])
+  a[,1] <- format(a[,1], '%m-%Y')
+  a <- dplyr::ungroup(
+    dplyr::summarise(
+      dplyr::group_by(a,date),
+      tasa = mean(value, na.rm =T)
+    )
+  )
+  if (j == 1) {
+    ds <- a
+    colnames(ds) <- c('date' , Tasa[i])
+    j = j + 1
+    next
+  }
+  ds <- dplyr::full_join(ds, a, by = 'date')
+  j = j + 1
+  colnames(ds)[j] <- Tasa[i]
+}
+ds <- dplyr::select(ds, c('date', Tasa))
+ds[,1] <- as.Date(paste(rep('01-',dim(ds)[1]), 
+                           as.data.frame(ds)[,1], sep = ''), 
+                     '%d-%m-%Y')
+ds <- dplyr::arrange(ds, date)
+
+#summary(ds)
+#var(ds, na.rm = T)
+```
+
+Table: Tasas de interés I
+
+|date       | Tasa objetivo| CETES 28 días| CETES 1 año| Bonos 3 años| Bonos 5 años| Bonos 10 años|
+|:----------|-------------:|-------------:|-----------:|------------:|------------:|-------------:|
+|2021-10-01 |      4.750000|        4.8400|      6.2225|         6.68|         7.43|          7.61|
+|2021-11-01 |      4.908333|        5.0475|      6.4750|         7.05|         7.60|          7.54|
+|2021-12-01 |      5.241936|        5.2880|      6.6780|         7.19|         7.34|          7.57|
+|2022-01-01 |      5.500000|        5.5250|      6.9825|         7.61|         7.69|              |
+|2022-02-01 |      5.821429|        5.8700|      7.1625|         7.57|         7.76|          7.68|
+
+
+**(b) Produzca una tabla de estadísticas descriptivas de estos datos, in- cluyendo medias y varianzas, para todo el periodo para el que tenga datos de cada variable.**
+
+Se presentan las tablas de estadísticos con la media y varianza incluidas. 
+
+Table: Estadísticas descriptivas I
+
+|     date          |Tasa objetivo |CETES 28 días | CETES 1 año  |
+|:------------------|:-------------|:-------------|:-------------|
+|Min.   :2009-07-01 |Min.   :3.000 |Min.   :2.672 |Min.   :3.010 |
+|1st Qu.:2012-09-01 |1st Qu.:4.000 |1st Qu.:3.845 |1st Qu.:4.196 |
+|Median :2015-11-01 |Median :4.500 |Median :4.329 |Median :4.760 |
+|Mean   :2015-10-31 |Mean   :5.000 |Mean   :4.883 |Mean   :5.280 |
+|3rd Qu.:2019-01-01 |3rd Qu.:6.107 |3rd Qu.:6.066 |3rd Qu.:6.737 |
+|Max.   :2022-03-01 |Max.   :8.250 |Max.   :8.250 |Max.   :8.670 |
+|                   |Var    :2.522 |Var    :3.104 |Var    :2.946 |
+
+Table: Estadísticas descriptivas II
+
+|     date          | Bonos 3 años | Bonos 5 años |Bonos 10 años |
+|:------------------|:-------------|:-------------|:-------------|
+|Min.   :2009-07-01 |Min.   :4.000 |Min.   :4.140 |Min.   :4.640 |
+|1st Qu.:2012-09-01 |1st Qu.:4.808 |1st Qu.:5.120 |1st Qu.:6.005 |
+|Median :2015-11-01 |Median :5.395 |Median :5.940 |Median :6.465 |
+|Mean   :2015-10-31 |Mean   :5.776 |Mean   :6.144 |Mean   :6.664 |
+|3rd Qu.:2019-01-01 |3rd Qu.:6.720 |3rd Qu.:7.173 |3rd Qu.:7.497 |
+|Max.   :2022-03-01 |Max.   :8.870 |Max.   :8.795 |Max.   :9.110 |
+|                   |Var    :1.621 |Var    :1.393 |Var    :0.824 |
+
+Notemos que la varianza disminuye de acuerdo al plazo para los bonos del gobierno. Sucede de igual forma para la TIIE de 28 día y de 91 días. De igual forma, las tasas de interés del gobierno aumentan su media de acuerdo al plazo, a mayor plazo un mayor rendimiento. 
+
+**(c) Calcule una regresión de los CAMBIOS en cada una de las tasas, excepto la del Banco de México, en función de los CAMBIOS en la tasa de interés del Banco de México. Produzca una tabla comparando los resultados de las distintas regresiones.**
+
+Realizamos la siguiente regresión lineal. 
+
+$$
+\text{Tasa}_{plazo} = 
+\alpha+
+\beta_1\text{Tasa de objetivo}+
+u
+$$
+
+```{r, echo=FALSE}
+regresion <- function(datos = ds, 
+                      agrupacion = NA, 
+                      var.agrupacion = NA, 
+                      dependiente = 1, 
+                      independiente = 2, 
+                      nombre.regresion = 'reg.1'){
+  if (is.na(agrupacion) == F) {
+    if (is.na(var.agrupacion) == T | is.numeric(var.agrupacion) == F) {
+      stop('No especificaste el número de columna
+           para agrupar ó la variable -var.agrupacion- no es numérica')
+    }
+    datos <- datos[datos[,var.agrupacion] == agrupacion,]
+  }
+  n <- dim(datos)[1]
+  X <-  matrix(cbind(rep(1,n), as.matrix(datos[,independiente])), 
+               ncol = (length(independiente) + 1), nrow = n)
+  colnames(X) <-  c('alpha', colnames(datos)[independiente])
+  Y <-  as.matrix(datos[,dependiente[1]], ncol = 1)
+  colnames(Y) <- nombre.regresion
+  b.hat <- solve(t(X) %*% X) %*% t(X) %*% Y
+  sigma.hat <- t(Y - X %*% b.hat) %*% (Y - X %*% b.hat) * (1/(n-dim(X)[2]))
+  xtx <- solve(t(X) %*% X)
+  s.e <- c()
+  for (i in 1:(length(independiente)+1)) {
+    s.e[i] <- sqrt(sigma.hat)*sqrt(xtx[i,i])
+  }
+  R <- c(sum((X %*% b.hat - mean(Y))^2)/sum((Y - mean(Y))^2),NA)
+  b.hat <- round(rbind(cbind(b.hat, s.e),R),3)
+  t(b.hat)
+}
+
+# reg uno
+nombres <- names(ds)[3:7]
+j = 1
+for (k in c(3:7)) {
+  modelo.1 <- ds[,c(2,k)]
+  
+  for (i in 1:dim(modelo.1)[2]) {
+    modelo.1 <- modelo.1[is.na(modelo.1[,i]) != TRUE,]
+  }
+  
+  ds.nolag <- matrix(unlist(modelo.1[1:(dim(modelo.1)[1]-1),]),
+                     ncol = dim(modelo.1)[2])
+  ds.lag <- matrix(unlist(modelo.1[2:dim(modelo.1)[1],]),
+                   ncol = dim(modelo.1)[2])
+  ds.modelo.1 <- (ds.lag - ds.nolag)/ds.nolag
+  colnames(ds.modelo.1) <- names(modelo.1)
+  
+  I <- regresion(datos = ds.modelo.1,
+                  dependiente = 2,
+                  independiente = 1,
+                  nombre.regresion = nombres[j]) 
+  if (j == 1) {
+    reg.1 <- I
+    j = j+1
+    next
+  }
+  reg.1 <- rbind(reg.1, I)
+  j = j + 1
+}
+
+#knitr::kable(reg.1, caption = 'Modelo 1')
+```
+
+Table: Modelo 1
+
+|              | alpha| Tasa objetivo|     R|
+|:-------------|-----:|-------------:|-----:|
+|CETES 28 días | 0.000|        0.923*| 0.602|
+|s.e           | 0.002|         0.061|      |
+|CETES 1 año   | 0.001|        0.853*| 0.423|
+|s.e           | 0.003|         0.082|      |
+|Bonos 3 años  | 0.002|        0.410*| 0.071|
+|s.e           | 0.004|         0.122|      |
+|Bonos 5 años  | 0.002|        0.382*| 0.050|
+|s.e           | 0.005|         0.143|      |
+|Bonos 10 años | 0.001|         0.189| 0.015|
+|s.e           | 0.007|         0.151|      |
+
+$^*$ Significativo al 99%
+
+Notar que el coeficiente es decreciente en el tiempo, así como que la tasa objetivo explica cada vez menos varianza del movimiento en la tasa de los instrumentos a mayor plazo. Notar que los Cetes a 28 días se mueven casí igual que la tasa de referencia, también los CETES a un año se mueve de manera muy similar. 
+
+
+**(d) Interprete sus resultados a la luz de lo obtenido por Cook y Hahn para el caso de Estados Unidos.**
+
+Obtenemos los mismos resultados cualitativos que los obtenido por Cook y Hahn. Nosotros, como Cook y Hahn, no diferenciamos los movimientos de la tasa de interés entre anticipados y no anticipados, lo anterior implica que el efecto que estimamos está subestimado cuando los cambio no son anticipados. En efecto, notar que el movimiento de Bonos a 10 años no rechaza la hipótesis nula, esto puede deberse a que no se diferenció entre cambios anticipados y no anticipados mas que no existe efecto en los bonos de 10 años a un cambio en la tasa de referencia. Los resultados son como los presentados en la literatura por Cook y Hahn.
+
+**4. Estudie la velocidad del dinero en México siguiendo estos pasos: [2 horas, 1.5 puntos cada inciso]. Por favor documente su trabajo para que se pueda replicar.**
+
+**(a) Obtenga datos de la cantidad de dinero de distintos tipos M0, M1, M2, M3, M4 en México y grafíquelos (en logaritmos), a frecuencia trimestral.**
+
+**(b) Obtenga el PIB nominal, y calcule la “cantidad real de dinero” M0,M1, M2,M3,M4 en México y grafique las tasas de crecimiento de los dis- tintos tipos de dinero, todo a frecuencia trimestral.**
+
+**(c) Produzca una tabla de estadísticas descriptivas de las tasas de crecimiento de las distintas formas de dinero real, incluyendo medias y varianzas, para todo el periodo para el que tenga datos de cada variable.**
+
+**(d) Explique en qué medida el dinero parece comportarse o no de acuerdo a la teoría económica, considerando la demanda de dinero como una función de la actividad económica, los precios y la tasa de interés.**
+
