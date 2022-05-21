@@ -213,9 +213,76 @@ Obtenemos los mismos resultados cualitativos que los obtenido por Cook y Hahn. N
 
 **4. Estudie la velocidad del dinero en México siguiendo estos pasos: [2 horas, 1.5 puntos cada inciso]. Por favor documente su trabajo para que se pueda replicar.**
 
+
+
+
 **(a) Obtenga datos de la cantidad de dinero de distintos tipos M0, M1, M2, M3, M4 en México y grafíquelos (en logaritmos), a frecuencia trimestral.**
 
-**(b) Obtenga el PIB nominal, y calcule la “cantidad real de dinero” M0,M1, M2,M3,M4 en México y grafique las tasas de crecimiento de los dis- tintos tipos de dinero, todo a frecuencia trimestral.**
+Se utilizaron las siguientes series del SIE de Banxico. Se definió como M0 los billetes y monedas en poder del público. 
+
+```{r, echo=FALSE}
+Agregado <- c('Agregados Monetarios, M1, Billetes y monedas en poder del público', 
+          'M1', 'M2', 'M3', 'M4')
+Serie <- c('SF311409', 'SF311408', 'SF311418', 
+           'SF311433','SF311438')
+tipificacion <- data.frame(Agregado, Serie)
+knitr::kable(tipificacion, caption = 'Agregados monetarios')
+```
+
+```{r, echo=FALSE}
+# Abrir sesión en API banxico
+tkn <- "8bd93af99a69ac4062f645fd43e0b517c5c88bb17750149a9fce21e47f8264af"
+siebanxicor::setToken(tkn)
+series <- siebanxicor::getSeriesData(Serie, '2000-01-01','2022-03-01')
+j = 1
+for (i in match(names(series),Serie)) {
+  a <- data.frame(series[[j]])
+  a[,1] <- format(a[,1], '%m-%Y')
+  if (j == 1) {
+    ds <- a
+    colnames(ds) <- c('date' , Agregado[i])
+    j = j + 1
+    next
+  }
+  ds <- dplyr::full_join(ds, a, by = 'date')
+  j = j + 1
+  colnames(ds)[j] <- Agregado[i]
+}
+```
+
+```{r, echo=FALSE}
+ds <- dplyr::select(ds, c('date', all_of(Agregado)))
+```
+
+```{r, echo=FALSE}
+ds[,1] <- as.Date(paste(rep('01-',dim(ds)[1]), 
+                           as.data.frame(ds)[,1], sep = ''), 
+                     '%d-%m-%Y')
+ds <- dplyr::arrange(ds, date)
+names(ds)[2] <- 'M0'
+ds.log <- ds
+nombres <- rep(names(ds.log)[2:dim(ds.log)[2]],each = dim(ds.log)[1])
+fecha <- rep(dplyr::pull(ds.log, date), (dim(ds.log)[2]-1))
+log.monetario <- c()
+for (i in 2:dim(ds)[2]) {
+  ds.log[i] <- log(ds.log[i])
+  log.monetario <- c(log.monetario, dplyr::pull(ds.log, i))
+}
+knitr::kable(tail(ds.log), caption = 'Agregados monetarios')
+```
+
+```{r, echo=FALSE}
+ds.plot <- data.frame(list(Fecha = fecha, Agregado = nombres, Log = log.monetario))
+
+ggplot2::ggplot(data = ds.plot, ggplot2::aes(x = Fecha, y = Log, color = Agregado)) + 
+  ggplot2::geom_line() + 
+  ggplot2::labs(title = 'Agregados monetarios', 
+                x = 'Año', y = 'Logaritmo',
+                subtitle = 'Logaritmos de valor nominal',
+                caption = 'Elaboración propia con datos de la SIE')
+```
+
+**(b) Obtenga el PIB nominal, y calcule la “cantidad real de dinero” M0,M1, M2,M3,M4 en México y grafique las tasas de crecimiento de los distintos tipos de dinero, todo a frecuencia trimestral.**
 
 **(c) Produzca una tabla de estadísticas descriptivas de las tasas de crecimiento de las distintas formas de dinero real, incluyendo medias y varianzas, para todo el periodo para el que tenga datos de cada variable.**
 
