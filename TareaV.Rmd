@@ -193,14 +193,391 @@ No. Notemos que
 \end{align}
 Lo cual nunca sucede. Por lo que cambios en inflación esperada no afectan uno a uno la tasa de interés nominal. 
 
+
 **2. Estudie la inflación y la política monetaria en México siguiendo estos pasos: [2 horas, 1.5 puntos cada inciso]. Por favor documente su trabajo para que se pueda replicar.**
+```{r paquetes, warning= FALSE, message= FALSE, echo=FALSE}
+# install.packages("xts")
+# install.packages("tseries")
+library(xts)
+library(ggplot2)
+library(ggfortify)
+library(inegiR)
+library(tseries)
+library(stargazer)
+```
 
 **(a) Obtenga datos de las inflaciones ANUALES general y subyacente (del Índice Nacional de Precios al Consumidor) de México, por lo menos desde 1980, datos del desempleo a nivel nacional en México, y datos de la tasa de interés a corto plazo de México, todos a frecuencia MENSUAL, y grafíquelos individualmente.**
+Se tomaron los datos de la inflación y del desempleo de las bases de datos del INEGI, y la tasa de interés a corto plazo del Banco de México.  Es importante señalar que los datos sobre desocupación se tomaron de muestras urbanas de los 32 estados de la república, pues antes de 2005 la ENOE no se realizaba de forma general en el país. Por otro lado, para la tasa de interés a corto plazo se usaron los datos de CETES 28. Finalmente, cabe añadir que se tomó el promedio de la inflación mensual para obtener los datos de cada año.
+```{r, warning=FALSE}
+## Series de tiempo de variables requeridas
+token_inegi <- "912ec65b-e82f-d58e-4efd-130da3484cf1"
 
+# Datos
+Inflacion_general <- inegi_series(583753, token_inegi)
+Inflacion_subyacente <- inegi_series(628202, token_inegi)
+Desempleo_tasa <- inegi_series(444884, token_inegi)
+Desempleo_tasa_urbana <- inegi_series(123052, token_inegi)
+tkn <- "8bd93af99a69ac4062f645fd43e0b517c5c88bb17750149a9fce21e47f8264af"
+siebanxicor::setToken(tkn)
+Tasa_CP <- siebanxicor::getSeriesData('SF43936', '1986-02-28','2022-03-01')
+
+
+## Series de tiempo
+Infgen_serie_m <- xts(Inflacion_general$values, Inflacion_general$date)
+Infgen_serie <- xts(Inflacion_general$values, Inflacion_general$date)
+Infgen_serie <- period.apply(Infgen_serie, 
+                               INDEX = endpoints(Infgen_serie, on = "years", k = 1),
+                               FUN = mean)
+Infsub_serie_m <- xts(Inflacion_subyacente$values, Inflacion_subyacente$date)
+Infsub_serie <- xts(Inflacion_subyacente$values, Inflacion_subyacente$date)
+Infsub_serie <- period.apply(Infsub_serie, 
+                               INDEX = endpoints(Infsub_serie, on = "years", k = 1),
+                               FUN = mean)
+Tasades_nuevo_serie <- xts(Desempleo_tasa$values, Desempleo_tasa$date)
+Tasades_antiguo_serie <- xts(Desempleo_tasa_urbana$values, Desempleo_tasa_urbana$date)
+Tasades_antiguo_serie <- Tasades_antiguo_serie['1996/2004']
+Tasades_serie <- c(Tasades_antiguo_serie, Tasades_nuevo_serie)
+Tasades_serie <- period.apply(Tasades_serie, 
+                               INDEX = endpoints(Tasades_serie, on = "months", k = 1),
+                               FUN = mean)
+TasaCP_serie <- xts(Tasa_CP$SF43936$value, Tasa_CP$SF43936$date)
+TasaCP_serie <- period.apply(TasaCP_serie, 
+                               INDEX = endpoints(TasaCP_serie, on = "months", k = 1),
+                               FUN = mean)
+```
+
+```{r fig.cap="Serie de tiempo de inflación (1970-2022)", echo=FALSE}
+## Gráficos
+autoplot(Infgen_serie, ts.colour = 'red', xlab = "Año", ylab = "Inflación total")
+```
+
+```{r fig.cap="Serie de tiempo de inflación subyacente (1982-2022)", echo=FALSE}
+## Gráficos
+autoplot(Infsub_serie, ts.colour = 'blue', xlab = "Año", ylab = "Inflación subyacente")
+```
+
+```{r fig.cap="Tasa de desempleo (1996-2022)", echo=FALSE}
+## Gráficos
+autoplot(Tasades_serie, ts.colour = 'salmon', xlab = "Año", ylab = "Tasa de desempleo")
+```
+
+```{r fig.cap="Serie de tiempo de tasa de interés a corto plazo (1986-2022)", echo=FALSE}
+## Gráficos
+autoplot(TasaCP_serie, ts.colour = 'orange', xlab = "Año", ylab = "Tasa de interés de corto plazo")
+```
+
+\newpage
 **(b) Produzca una tabla de estadísticas descriptivas de estos datos, incluyendo medias, varianzas y autocorrelaciones, para todo el periodo para el que tenga datos y para dos subperiodos, antes y después del año 1999.**
+```{r}
+## Inflación general
+### Total
+Obs_Infgen <- length(Infgen_serie)
+Media_Infgen <- mean(Infgen_serie)
+Var_Infgen <- var(Infgen_serie)
+Min_Infgen <- min(Infgen_serie)
+Max_Infgen <- max(Infgen_serie)
+Rango_Infgen <- Max_Infgen-Min_Infgen
+Autocorr_Infgen <- acf(Infgen_serie, lag=2, pl=FALSE)
+Total_Infgen <- data.frame("Obs" = Obs_Infgen,
+                           "Media" = Media_Infgen,
+                           "Varianza" = Var_Infgen,
+                           "Min" = Min_Infgen,
+                           "Max"= Max_Infgen,
+                           "Rango" = Rango_Infgen,
+                           "Autocorr"=
+                             t(as.matrix(Autocorr_Infgen[[1]])))
+### Anterior a 1999
+Infgen_antig_serie <- Infgen_serie['1950/1998']
+Obs_Infgen_antig <- length(Infgen_antig_serie)
+Media_Infgen_antig <- mean(Infgen_antig_serie)
+Var_Infgen_antig <- var(Infgen_antig_serie)
+Min_Infgen_antig <- min(Infgen_antig_serie)
+Max_Infgen_antig <- max(Infgen_antig_serie)
+Rango_Infgen_antig <- Max_Infgen_antig-Min_Infgen_antig
+Autocorr_Infgen_antig <- acf(Infgen_antig_serie, lag=2, pl=FALSE)
+Total_Infgen_antig <- data.frame("Obs" = Obs_Infgen_antig,
+                           "Media" = Media_Infgen_antig,
+                           "Varianza" = Var_Infgen_antig,
+                           "Min" = Min_Infgen_antig,
+                           "Max"= Max_Infgen_antig,
+                           "Rango" = Rango_Infgen_antig,
+                           "Autocorr"=
+                             t(as.matrix(Autocorr_Infgen_antig[[1]])))
+
+### Posterior a 1999
+Infgen_nuev_serie <- Infgen_serie['1999/2030']
+Obs_Infgen_nuev <- length(Infgen_nuev_serie)
+Media_Infgen_nuev <- mean(Infgen_nuev_serie)
+Var_Infgen_nuev <- var(Infgen_nuev_serie)
+Min_Infgen_nuev <- min(Infgen_nuev_serie)
+Max_Infgen_nuev <- max(Infgen_nuev_serie)
+Rango_Infgen_nuev <- Max_Infgen_nuev-Min_Infgen_nuev
+Autocorr_Infgen_nuev <- acf(Infgen_nuev_serie, lag=2, pl=FALSE)
+Total_Infgen_nuev <- data.frame("Obs" = Obs_Infgen_nuev,
+                           "Media" = Media_Infgen_nuev,
+                           "Varianza" = Var_Infgen_nuev,
+                           "Min" = Min_Infgen_nuev,
+                           "Max"= Max_Infgen_nuev,
+                           "Rango" = Rango_Infgen_nuev,
+                           "Autocorr"=
+                             t(as.matrix(Autocorr_Infgen_nuev[[1]])))
 
 
-**(c) Una “regla de Taylor” es una función que define a la tasa de interés de corto plazo del periodo t en términos de la distancia entre la inflación y su objetivo y del desempleo y su objetivo en el periodo t-1 (y de una constante). Asuma que el objetivo de inflación es 3% y tome el objetivo de desempleo como 3% y estime los coeficientes de una regla de Taylor para México para tres grupos de datos: el periodo completo para el que tenga datos, y los dos sub-periodos definidos anteriormente. Estime las regresiones con la inflación general y con la subyacente. (John Taylor famosamente empezó por decir que era sólamente una relación empírica – positiva –, y ya que se hizo famosa su regla, empezó a decir que debería usarse como regla para la deter- minación de la tasa de interés de política – normativa.)**
+## Inflación subyacente
+### Total
+Obs_Infsub <- length(Infsub_serie)
+Media_Infsub <- mean(Infsub_serie)
+Var_Infsub <- var(Infsub_serie)
+Min_Infsub <- min(Infsub_serie)
+Max_Infsub <- max(Infsub_serie)
+Rango_Infsub <- Max_Infsub-Min_Infsub
+Autocorr_Infsub <- acf(Infsub_serie, lag=2, pl=FALSE)
+Total_Infsub <- data.frame("Obs" = Obs_Infsub,
+                           "Media" = Media_Infsub,
+                           "Varianza" = Var_Infsub,
+                           "Min" = Min_Infsub,
+                           "Max"= Max_Infsub,
+                           "Rango" = Rango_Infsub,
+                           "Autocorr"=
+                             t(as.matrix(Autocorr_Infsub[[1]])))
+### Anterior a 1999
+Infsub_antig_serie <- Infsub_serie['1950/1998']
+Obs_Infsub_antig <- length(Infsub_antig_serie)
+Media_Infsub_antig <- mean(Infsub_antig_serie)
+Var_Infsub_antig <- var(Infsub_antig_serie)
+Min_Infsub_antig <- min(Infsub_antig_serie)
+Max_Infsub_antig <- max(Infsub_antig_serie)
+Rango_Infsub_antig <- Max_Infsub_antig-Min_Infsub_antig
+Autocorr_Infsub_antig <- acf(Infsub_antig_serie, lag=2, pl=FALSE)
+Total_Infsub_antig <- data.frame("Obs" = Obs_Infsub_antig,
+                           "Media" = Media_Infsub_antig,
+                           "Varianza" = Var_Infsub_antig,
+                           "Min" = Min_Infsub_antig,
+                           "Max"= Max_Infsub_antig,
+                           "Rango" = Rango_Infsub_antig,
+                           "Autocorr"=
+                             t(as.matrix(Autocorr_Infsub_antig[[1]])))
+
+### Posterior a 1999
+Infsub_nuev_serie <- Infsub_serie['1999/2030']
+Obs_Infsub_nuev <- length(Infsub_nuev_serie)
+Media_Infsub_nuev <- mean(Infsub_nuev_serie)
+Var_Infsub_nuev <- var(Infsub_nuev_serie)
+Min_Infsub_nuev <- min(Infsub_nuev_serie)
+Max_Infsub_nuev <- max(Infsub_nuev_serie)
+Rango_Infsub_nuev <- Max_Infsub_nuev-Min_Infsub_nuev
+Autocorr_Infsub_nuev <- acf(Infsub_nuev_serie, lag=2, pl=FALSE)
+Total_Infsub_nuev <- data.frame("Obs" = Obs_Infsub_nuev,
+                           "Media" = Media_Infsub_nuev,
+                           "Varianza" = Var_Infsub_nuev,
+                           "Min" = Min_Infsub_nuev,
+                           "Max"= Max_Infsub_nuev,
+                           "Rango" = Rango_Infsub_nuev,
+                           "Autocorr"=
+                             t(as.matrix(Autocorr_Infsub_nuev[[1]])))
+
+
+## Tasa de desempleo
+### Total
+Obs_Tasades <- length(Tasades_serie)
+Media_Tasades <- mean(Tasades_serie)
+Var_Tasades <- var(Tasades_serie)
+Min_Tasades <- min(Tasades_serie)
+Max_Tasades <- max(Tasades_serie)
+Rango_Tasades <- Max_Tasades-Min_Tasades
+Autocorr_Tasades <- acf(Tasades_serie, lag=2, pl=FALSE)
+Total_Tasades <- data.frame("Obs" = Obs_Tasades,
+                           "Media" = Media_Tasades,
+                           "Varianza" = Var_Tasades,
+                           "Min" = Min_Tasades,
+                           "Max"= Max_Tasades,
+                           "Rango" = Rango_Tasades,
+                           "Autocorr"=
+                             t(as.matrix(Autocorr_Tasades[[1]])))
+### Anterior a 1999
+Tasades_antig_serie <- Tasades_serie['1950/1998']
+Obs_Tasades_antig <- length(Tasades_antig_serie)
+Media_Tasades_antig <- mean(Tasades_antig_serie)
+Var_Tasades_antig <- var(Tasades_antig_serie)
+Min_Tasades_antig <- min(Tasades_antig_serie)
+Max_Tasades_antig <- max(Tasades_antig_serie)
+Rango_Tasades_antig <- Max_Tasades_antig-Min_Tasades_antig
+Autocorr_Tasades_antig <- acf(Tasades_antig_serie, lag=2, pl=FALSE)
+Total_Tasades_antig <- data.frame("Obs" = Obs_Tasades_antig,
+                           "Media" = Media_Tasades_antig,
+                           "Varianza" = Var_Tasades_antig,
+                           "Min" = Min_Tasades_antig,
+                           "Max"= Max_Tasades_antig,
+                           "Rango" = Rango_Tasades_antig,
+                           "Autocorr"=
+                             t(as.matrix(Autocorr_Tasades_antig[[1]])))
+
+### Posterior a 1999
+Tasades_nuev_serie <- Tasades_serie['1999/2030']
+Obs_Tasades_nuev <- length(Tasades_nuev_serie)
+Media_Tasades_nuev <- mean(Tasades_nuev_serie)
+Var_Tasades_nuev <- var(Tasades_nuev_serie)
+Min_Tasades_nuev <- min(Tasades_nuev_serie)
+Max_Tasades_nuev <- max(Tasades_nuev_serie)
+Rango_Tasades_nuev <- Max_Tasades_nuev-Min_Tasades_nuev
+Autocorr_Tasades_nuev <- acf(Tasades_nuev_serie, lag=2, pl=FALSE)
+Total_Tasades_nuev <- data.frame("Obs" = Obs_Tasades_nuev,
+                           "Media" = Media_Tasades_nuev,
+                           "Varianza" = Var_Tasades_nuev,
+                           "Min" = Min_Tasades_nuev,
+                           "Max"= Max_Tasades_nuev,
+                           "Rango" = Rango_Tasades_nuev,
+                           "Autocorr"=
+                             t(as.matrix(Autocorr_Tasades_nuev[[1]])))
+
+
+
+## Tasa a corto plazo
+### Total
+Obs_TasaCP <- length(TasaCP_serie)
+Media_TasaCP <- mean(TasaCP_serie,  na.rm=TRUE)
+Var_TasaCP <- var(TasaCP_serie,  na.rm=TRUE)
+Min_TasaCP <- min(TasaCP_serie,  na.rm=TRUE)
+Max_TasaCP <- max(TasaCP_serie,  na.rm=TRUE)
+Rango_TasaCP <- Max_TasaCP-Min_TasaCP
+Autocorr_TasaCP <- acf(TasaCP_serie, lag=2, pl=FALSE, na.action=na.pass)
+Total_TasaCP <- data.frame("Obs" = Obs_TasaCP,
+                           "Media" = Media_TasaCP,
+                           "Varianza" = Var_TasaCP,
+                           "Min" = Min_TasaCP,
+                           "Max"= Max_TasaCP,
+                           "Rango" = Rango_TasaCP,
+                           "Autocorr"=
+                             t(as.matrix(Autocorr_TasaCP[[1]])))
+### Anterior a 1999
+TasaCP_antig_serie <- TasaCP_serie['1950/1998']
+Obs_TasaCP_antig <- length(TasaCP_antig_serie)
+Media_TasaCP_antig <- mean(TasaCP_antig_serie,  na.rm=TRUE)
+Var_TasaCP_antig <- var(TasaCP_antig_serie,  na.rm=TRUE)
+Min_TasaCP_antig <- min(TasaCP_antig_serie,  na.rm=TRUE)
+Max_TasaCP_antig <- max(TasaCP_antig_serie,  na.rm=TRUE)
+Rango_TasaCP_antig <- Max_TasaCP_antig-Min_TasaCP_antig
+Autocorr_TasaCP_antig <- acf(TasaCP_antig_serie, lag=2, pl=FALSE, na.action=na.pass)
+Total_TasaCP_antig <- data.frame("Obs" = Obs_TasaCP_antig,
+                           "Media" = Media_TasaCP_antig,
+                           "Varianza" = Var_TasaCP_antig,
+                           "Min" = Min_TasaCP_antig,
+                           "Max"= Max_TasaCP_antig,
+                           "Rango" = Rango_TasaCP_antig,
+                           "Autocorr"=
+                             t(as.matrix(Autocorr_TasaCP_antig[[1]])))
+
+### Posterior a 1999
+TasaCP_nuev_serie <- TasaCP_serie['1999/2030']
+Obs_TasaCP_nuev <- length(TasaCP_nuev_serie)
+Media_TasaCP_nuev <- mean(TasaCP_nuev_serie)
+Var_TasaCP_nuev <- var(TasaCP_nuev_serie)
+Min_TasaCP_nuev <- min(TasaCP_nuev_serie)
+Max_TasaCP_nuev <- max(TasaCP_nuev_serie)
+Rango_TasaCP_nuev <- Max_TasaCP_nuev-Min_TasaCP_nuev
+Autocorr_TasaCP_nuev <- acf(TasaCP_nuev_serie, lag=2, pl=FALSE, na.action=na.pass)
+Total_TasaCP_nuev <- data.frame("Obs" = Obs_TasaCP_nuev,
+                           "Media" = Media_TasaCP_nuev,
+                           "Varianza" = Var_TasaCP_nuev,
+                           "Min" = Min_TasaCP_nuev,
+                           "Max"= Max_TasaCP_nuev,
+                           "Rango" = Rango_TasaCP_nuev,
+                           "Autocorr"=
+                             t(as.matrix(Autocorr_TasaCP_nuev[[1]])))
+
+Estadisticos <- rbind(Total_Infgen, Total_Infgen_antig, Total_Infgen_nuev,
+                      Total_Infsub, Total_Infsub_antig, Total_Infgen_nuev,
+                      Total_Tasades, Total_Tasades_antig, Total_Tasades_nuev,
+                      Total_TasaCP, Total_TasaCP_antig, Total_TasaCP_nuev)
+Estadisticos <- cbind("Datos"=c("Inflación", "Inflación -1999", "Inflación 1999-",
+                        "Inflación sub", "Inflación sub -1999", "Inflación sub 1999-",
+                        "Tasa desempleo", "Tasa desempleo -1999", "Tasa desempleo 1999-",
+                        "Tasa CP", "Tasa CP -1999", "Tasa CP 1999-"), 
+                      Estadisticos)
+# knitr::kable(Estadisticos, digits=3, caption = 'Estadísticos')
+
+```
+
+Table: Estadísticos
+
+|Datos                | Obs|  Media| Varianza|   Min|     Max|   Rango| Autocorr.1| Autocorr.2| Autocorr.3|
+|:--------------------|---:|------:|--------:|-----:|-------:|-------:|----------:|----------:|----------:|
+|Inflación            |  53| 21.870|  888.845| 2.724| 128.892| 126.168|          1|      0.776|      0.543|
+|Inflación -1999      |  29| 35.662| 1208.891| 4.939| 128.892| 123.953|          1|      0.683|      0.358|
+|Inflación 1999-      |  24|  5.205|    8.249| 2.724|  16.671|  13.947|          1|      0.402|      0.103|
+|Inflación sub        |  41|  1.511|    3.912| 0.200|   8.230|   8.030|          1|      0.777|      0.566|
+|Inflación sub -1999  |  17|  3.106|    5.102| 0.619|   8.230|   7.611|          1|      0.630|      0.279|
+|Inflación sub 1999-  |  24|  5.205|    8.249| 2.724|  16.671|  13.947|          1|      0.402|      0.103|
+|Tasa desempleo       | 306|  4.271|    0.661| 2.760|   7.300|   4.540|          1|      0.876|      0.825|
+|Tasa desempleo -1999 |  27|  5.193|    0.717| 3.700|   7.300|   3.600|          1|      0.596|      0.392|
+|Tasa desempleo 1999- | 279|  4.182|    0.568| 2.760|   6.280|   3.520|          1|      0.900|      0.864|
+|Tasa CP              | 432| 18.651|  576.155| 2.673| 157.070| 154.397|          1|      0.975|      0.931|
+|Tasa CP -1999        | 154| 39.650|  907.709| 9.450| 157.070| 147.620|          1|      0.966|      0.894|
+|Tasa CP 1999-        | 278|  7.095|   18.718| 2.673|  32.125|  29.452|          1|      0.926|      0.859|
+
+**(c) Una “regla de Taylor” es una función que define a la tasa de interés de corto plazo del periodo t en términos de la distancia entre la inflación y su objetivo y del desempleo y su objetivo en el periodo t-1 (y de una constante). Asuma que el objetivo de inflación es 3% y tome el objetivo de desempleo como 3% y estime los coeficientes de una regla de Taylor para México para tres grupos de datos: el periodo completo para el que tenga datos, y los dos sub-periodos definidos anteriormente. Estime las regresiones con la inflación general y con la subyacente. (John Taylor famosamente empezó por decir que era sólamente una relación empírica – positiva –, y ya que se hizo famosa su regla, empezó a decir que debería usarse como regla para la determinación de la tasa de interés de política – normativa.)**
+Para la solución de este problema usaremos la regla de Taylor general
+$$
+i_t=\alpha+\beta_1(\pi_t-\pi^*)+\beta_2(u_t-u^*)=\alpha+\beta_1(\pi_t-3)+\beta_2(u_t-3).
+$$
+
+Como solo tenemos datos del desempleo a partir de octubre de 1996, usaremos esta fecha como la inicial. Además, la tasa de interés a corto plazo sólo se tiene hasta febrero de 2022, por lo que esta será nuestra fecha final.
+
+```{r}
+f <- function(x){x-3}
+
+TasaCP <- TasaCP_serie["1996-10-01/2022-02-24"]
+TasaCP_pre1999 <- TasaCP_serie["1996-10-01/1998"]
+TasaCP_pos1999 <- TasaCP_serie["1999/2022-02-24"]
+Inflación_3 <- f(Infgen_serie_m["1996-10-01/2022-02-24"])
+Desempleo_3 <- f(Tasades_serie["1996-10-01/2022-02-24"])
+Inflacion_pre1999_3 <- f(Infgen_serie_m["1996-10-01/1998"])
+Desempleo_pre1999_3 <-  f(Tasades_serie["1996-10-01/1998"])
+Inflacion_pos1999_3 <- f(Infgen_serie_m["1999/2022-02-24"])
+Desempleo_pos1999_3 <-  f(Tasades_serie["1999/2022-02-24"])
+Inflaciónsub_3 <- f(Infsub_serie_m["1996-10-01/2022-02-24"])
+Inflacionsub_pre1999_3 <- f(Infsub_serie_m["1996-10-01/1998"])
+Inflacionsub_pos1999_3 <- f(Infsub_serie_m["1999/2022-02-24"])
+
+
+M1_Infgen <- lm(TasaCP~ 
+                  Inflación_3+ 
+                  Desempleo_3)
+M2_Infgen_pre1999 <- lm(TasaCP_pre1999 ~ 
+                          Inflacion_pre1999_3 + 
+                  Desempleo_pre1999_3)
+M3_Infgen_pos1999 <- lm(TasaCP_pos1999 ~ 
+                          Inflacion_pos1999_3 + 
+                  Desempleo_pos1999_3)
+M4_Infsub <- lm(TasaCP~ 
+                  Inflaciónsub_3+ 
+                  Desempleo_3)
+M5_Infsub_pre1999 <- lm(TasaCP_pre1999 ~ 
+                          Inflacionsub_pre1999_3+ 
+                  Desempleo_pre1999_3)
+M6_Infsub_pos1999 <- lm(TasaCP_pos1999~ 
+                         Inflacionsub_pos1999_3+ 
+                 Desempleo_pos1999_3)
+
+
+# stargazer(M1_Infgen, M2_Infgen_pre1999, M3_Infgen_pos1999, M4_Infsub,
+#           M5_Infsub_pre1999, M6_Infsub_pos1999, title="Regresiones", align=TRUE)
+
+
+```
+
+
+```{r, results='asis'}
+stargazer(M1_Infgen, M2_Infgen_pre1999, M3_Infgen_pos1999, 
+          title="Regresiones con inflación", header=FALSE, type='latex')
+```
+
+```{r, results='asis'}
+stargazer(M4_Infsub, M5_Infsub_pre1999, M6_Infsub_pos1999,
+          title="Regresiones con inflación subyacente", header=FALSE, type='latex')
+```
+
+\newpage 
 
 **(d) Interprete los resultados de las regresiones, en general, y a la luz de la adopción en México de un régimen de objetivos de inflación en el año 1999. (En realidad, el objetivo de inflación, fue 3% solamente a partir de 2003 cuando se volvió "la meta permanente".)**
 
