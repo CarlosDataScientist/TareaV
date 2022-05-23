@@ -214,7 +214,7 @@ library(stargazer)
 **(a) Obtenga datos de las inflaciones ANUALES general y subyacente (del Índice Nacional de Precios al Consumidor) de México, por lo menos desde 1980, datos del desempleo a nivel nacional en México, y datos de la tasa de interés a corto plazo de México, todos a frecuencia MENSUAL, y grafíquelos individualmente.**
 
 Se tomaron los datos de la inflación y del desempleo de las bases de datos del INEGI, y la tasa de interés a corto plazo del Banco de México.  Es importante señalar que los datos sobre desocupación antes de 2005 se obtuvieron de muestras urbanas de los 32 estados de la república, pues antes de este año la ENOE no se realizaba de forma general en el país. Por otro lado, para la tasa de interés a corto plazo se usaron los datos de CETES 28. 
-```{r, warning=FALSE}
+```{r, warning=FALSE, echo=FALSE}
 ## Series de tiempo de variables requeridas
 token_inegi <- "912ec65b-e82f-d58e-4efd-130da3484cf1"
 
@@ -274,7 +274,7 @@ autoplot(TasaCP_serie, ts.colour = 'orange', xlab = "Año", ylab = "Tasa de inte
 
 \newpage
 **(b) Produzca una tabla de estadísticas descriptivas de estos datos, incluyendo medias, varianzas y autocorrelaciones, para todo el periodo para el que tenga datos y para dos subperiodos, antes y después del año 1999.**
-```{r}
+```{r, echo=FALSE}
 ## Inflación general
 ### Total
 Obs_Infgen <- length(Infgen_serie)
@@ -530,7 +530,7 @@ $$
 
 Como solo tenemos datos del desempleo a partir de octubre de 1996, usaremos esta fecha como la inicial. Además, la tasa de interés a corto plazo sólo se tiene hasta febrero de 2022, por lo que esta será nuestra fecha final.
 
-```{r}
+```{r, echo=FALSE}
 f <- function(x){x-3}
 
 TasaCP <- TasaCP_serie["1996-10-01/2022-02-24"]
@@ -574,12 +574,12 @@ M6_Infsub_pos1999 <- lm(TasaCP_pos1999~
 ```
 
 
-```{r, results='asis'}
+```{r, results='asis', echo=FALSE}
 stargazer(M1_Infgen, M2_Infgen_pre1999, M3_Infgen_pos1999, 
           title="Regresiones con inflación", header=FALSE, type='latex')
 ```
 
-```{r, results='asis'}
+```{r, results='asis', echo=FALSE}
 stargazer(M4_Infsub, M5_Infsub_pre1999, M6_Infsub_pos1999,
           title="Regresiones con inflación subyacente", header=FALSE, type='latex')
 ```
