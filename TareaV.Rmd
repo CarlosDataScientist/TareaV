@@ -398,5 +398,50 @@ plot.5
 
 **(c) Produzca una tabla de estadísticas descriptivas de las tasas de crecimiento de las distintas formas de dinero real, incluyendo medias y varianzas, para todo el periodo para el que tenga datos de cada variable.**
 
+Se presentan las tablas de estadísticas descriptivas.
+
+```{r, echo=FALSE}
+# Estadísticas descriptivas
+resumen <- summary(ds.crec)
+varianza <- var(ds.crec[,-1], na.rm = T)
+#knitr::kable(summary(ds.crec))
+```
+
+Table: Estadísticas descriptivas I
+
+|     date          |      M0         |      M1         |      M2         |
+|:------------------|:----------------|:----------------|:----------------|
+|Min.   :2001-07-01 |Min.   :-0.02281 |Min.   :-0.01155 |Min.   :-0.02146 |
+|1st Qu.:2006-07-24 |1st Qu.: 0.02086 |1st Qu.: 0.02372 |1st Qu.: 0.01828 |
+|Median :2011-08-16 |Median : 0.04083 |Median : 0.04013 |Median : 0.03548 |
+|Mean   :2011-08-16 |Mean   : 0.04380 |Mean   : 0.04248 |Mean   : 0.03425 |
+|3rd Qu.:2016-09-08 |3rd Qu.: 0.07311 |3rd Qu.: 0.06192 |3rd Qu.: 0.04856 |
+|Max.   :2021-10-01 |Max.   : 0.11247 |Max.   : 0.11546 |Max.   : 0.08853 |
+|                   |Var    : 0.00113 |Var    : 0.00074 |Var    : 0.00045 |
+
+Table: Estadísticas descriptivas II
+
+|     date          |      M3         |      M4         |
+|:------------------|:----------------|:----------------|
+|Min.   :2001-07-01 |Min.   :-0.01773 |Min.   :-0.01844 |
+|1st Qu.:2006-07-24 |1st Qu.: 0.02183 |1st Qu.: 0.02086 |
+|Median :2011-08-16 |Median : 0.03612 |Median : 0.03565 |
+|Mean   :2011-08-16 |Mean   : 0.03515 |Mean   : 0.03659 |
+|3rd Qu.:2016-09-08 |3rd Qu.: 0.04555 |3rd Qu.: 0.04910 |
+|Max.   :2021-10-01 |Max.   : 0.08944 |Max.   : 0.08796 |
+|                   |Var    : 0.00035 |Var    : 0.00039 |
+
+Notar que el crecimiento de la media, la varianza y cuartiles va a aumentando conforme se van sumando los agregados algo que esperamos por la construcción de los indicadores. 
+
+
 **(d) Explique en qué medida el dinero parece comportarse o no de acuerdo a la teoría económica, considerando la demanda de dinero como una función de la actividad económica, los precios y la tasa de interés.**
+
+Utilizaremos la siguiente regresión para verificar si los saldos reales se comportan conforme a los esperado.
+
+$$
+\Delta \frac{\text{M}_{i \epsilon\{0,1,2,3,4\}}}{\text{P}} = \alpha + \beta_1\Delta \text{Y}_{real} + \beta_2 \Delta \text{Tasa de objetivo}
+$$
+
+Esperamos que $\beta_1 > 0$ ; $\beta_2 < 0$ y que sean significativos para que los agregados monetarios tengan la dirección de la teoría económica. 
+
 
