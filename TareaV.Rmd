@@ -1,6 +1,11 @@
 ---
 output: pdf_document
+header-includes:
+- \usepackage[spanish]{babel}\decimalpoint
+- \usepackage{pdfpages}
 ---
+\includepdf[pages=1]{portada_equipo_cuasiselecto.pdf}
+
 
 **Esta tarea es para “crédito adicional”. Realice los siguientes ejercicios por equipo.**
 
@@ -193,7 +198,7 @@ No. Notemos que
 \end{align}
 Lo cual nunca sucede. Por lo que cambios en inflación esperada no afectan uno a uno la tasa de interés nominal. 
 
-
+\newpage
 **2. Estudie la inflación y la política monetaria en México siguiendo estos pasos: [2 horas, 1.5 puntos cada inciso]. Por favor documente su trabajo para que se pueda replicar.**
 ```{r paquetes, warning= FALSE, message= FALSE, echo=FALSE}
 # install.packages("xts")
@@ -207,7 +212,8 @@ library(stargazer)
 ```
 
 **(a) Obtenga datos de las inflaciones ANUALES general y subyacente (del Índice Nacional de Precios al Consumidor) de México, por lo menos desde 1980, datos del desempleo a nivel nacional en México, y datos de la tasa de interés a corto plazo de México, todos a frecuencia MENSUAL, y grafíquelos individualmente.**
-Se tomaron los datos de la inflación y del desempleo de las bases de datos del INEGI, y la tasa de interés a corto plazo del Banco de México.  Es importante señalar que los datos sobre desocupación se tomaron de muestras urbanas de los 32 estados de la república, pues antes de 2005 la ENOE no se realizaba de forma general en el país. Por otro lado, para la tasa de interés a corto plazo se usaron los datos de CETES 28. Finalmente, cabe añadir que se tomó el promedio de la inflación mensual para obtener los datos de cada año.
+
+Se tomaron los datos de la inflación y del desempleo de las bases de datos del INEGI, y la tasa de interés a corto plazo del Banco de México.  Es importante señalar que los datos sobre desocupación antes de 2005 se obtuvieron de muestras urbanas de los 32 estados de la república, pues antes de este año la ENOE no se realizaba de forma general en el país. Por otro lado, para la tasa de interés a corto plazo se usaron los datos de CETES 28. 
 ```{r, warning=FALSE}
 ## Series de tiempo de variables requeridas
 token_inegi <- "912ec65b-e82f-d58e-4efd-130da3484cf1"
@@ -516,6 +522,7 @@ Table: Estadísticos
 |Tasa CP 1999-        | 278|  7.095|   18.718| 2.673|  32.125|  29.452|          1|      0.926|      0.859|
 
 **(c) Una “regla de Taylor” es una función que define a la tasa de interés de corto plazo del periodo t en términos de la distancia entre la inflación y su objetivo y del desempleo y su objetivo en el periodo t-1 (y de una constante). Asuma que el objetivo de inflación es 3% y tome el objetivo de desempleo como 3% y estime los coeficientes de una regla de Taylor para México para tres grupos de datos: el periodo completo para el que tenga datos, y los dos sub-periodos definidos anteriormente. Estime las regresiones con la inflación general y con la subyacente. (John Taylor famosamente empezó por decir que era sólamente una relación empírica – positiva –, y ya que se hizo famosa su regla, empezó a decir que debería usarse como regla para la determinación de la tasa de interés de política – normativa.)**
+
 Para la solución de este problema usaremos la regla de Taylor general
 $$
 i_t=\alpha+\beta_1(\pi_t-\pi^*)+\beta_2(u_t-u^*)=\alpha+\beta_1(\pi_t-3)+\beta_2(u_t-3).
