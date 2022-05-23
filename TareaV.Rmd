@@ -588,6 +588,37 @@ stargazer(M4_Infsub, M5_Infsub_pre1999, M6_Infsub_pos1999,
 
 **(d) Interprete los resultados de las regresiones, en general, y a la luz de la adopción en México de un régimen de objetivos de inflación en el año 1999. (En realidad, el objetivo de inflación, fue 3% solamente a partir de 2003 cuando se volvió "la meta permanente".)**
 
+En primer lugar, cabe destacar que, según el cuadro de estadísticos realizado, todas las variables salvo la inflación subyacente tienen mayor variabilidad en el período previo a 1999 (en particular, la inflación, en donde la variación llega a ser de cuatro dígitos;  la tasa de interés de corto plazo, de dos dígitos). Por otro lado, la inflación subyacente incrementa levemente su varianza de un dígito, por lo que podemos concluir que los choques en el período previo a 1999 estaban relacionados con los energéticos y los alimentos sin elaborar.
+
+La tendencia anterior también se observa en la media de la inflación y de la tasa de corto plazo, pues previo a 1999 es de dos dígitos y posteriormente es solamente de uno.
+
+Cabe destacar también que en todos los modelos se tienen más datos del período posterior a 1999, por lo que los dos modelos que sólo toman el conjunto total de datos están sesgados hacía lo que aconteció después de esta fecha.
+
+Ahora bien, en líneas generales podemos observar que en 5 de los 6 modelos calculados los coeficientes de las variables elegidas en la regla de Taylor (a saber, los respectivos $\alpha, \beta_1, \beta_2$) son individualmente significantes para un nivel de confianza de hasta 99.99%. Esto ocurre de igual modo con la significancia conjunta (que evaluamos a partir del estadístico F) para los mismos modelos. El único que no es significante es el modelo donde la inflación se toma como la subyacente en el período previo a 1999, por lo que no lo analizaremos (aún más, el modelo solamente explica al rededor del 5.6% de la variación de la tasa de interés a CP, por lo que no parece ser un buen modelo para relacionar la inflación y el desempleo con las decisiones de política monetaria).
+
+
+Por otro lado, observamos que en todos los modelos el sentido de la respuesta de la política monetaria es el esperado: si crece la inflación, para enfriar la economía se elige aumentar la tasa de interés de corto plazo; si aumenta el desempleo, la tasa de corto plazo se reduce para alentar la actividad económica. 
+
+
+Respecto a los modelos donde uno de los regresores es la diferencia entre la inflación total y la objetivo, podemos observar que la constante disminuye del período previo a 1999 al período siguiente. Es decir, la política monetaria, si la inflación y el desempleo estuvieran en su objetivo de 3%, buscaba ser más restrictiva y mantener las tasas hasta 2.5 veces más altas antes. Esto puede explicarse sea porque el objetivo de inflación no era el señalado, sino que probablemente era más alto, sea porque el objetivo de desempleo era distinto. 
+
+Por otro lado, podemos observar que el coeficiente $\beta_2$ del desempleo antes de 1999 es casi 5 veces mayor que el de la inflación en este período, y 3 veces mayor que el correspondiente en el período posterior a 1999. Esto significa que la política monetaria era mucho más aversa al desempleo que a la inflación en el período previo a 1999. En cambio, el coeficiente $\beta_1$ ha cambiado poco entre los dos períodos, si bien podríamos decir que se responde a desviaciones de la inflación de su objetivo un poco más.
+
+
+Finalmente, podemos observar de la $R^2$ que después de 1999 el 80% de las variación en la tasa de interés a corto plazo se puede explicar desde la Regla de Taylor propuesta, mientras que esta figura es tan solo de 34% para el período previo a 1999. Esto refleja que el Banco Central se ha mantenido en su compromiso pues casi la totalidad de los cambios en la tasa a corto plazo obedecen a los objetivos de inflación y desempleo (y probablemente la diferencia se debe a las coyunturas que llevan a mover alguno de los dos objetivos).
+
+
+Si nos centramos ahora en los modelos donde la regla de Taylor contempla la inflación subyacente, encontramos primero que la constante $\alpha$ aumenta en 10 puntos del período previo a 1999 al período posterior. Recordamos que en general se toman los precios más estables, con menor volatilidad, cambios estacionales y dependencia de decisiones administrativas. Es decir, los cambios en este nivel de inflación están relacionados más bien con cambios estructurales y no con cambios del ciclo económico a los cuales hay que responder y suavizar; podemos pensarla como un reflejo de lo que sucede a mediano plazo. Así, podemos observar que la política monetaria, comparando con los modelos de inflación, cambia su aversión a la inflación entre los dos períodos mencionados: antes de 1999 tenía una política monetaria menos restrictiva en el corto plazo que después de este año, pues reaccionaba más si la inflación de corto plazo estaba en su tasa objetivo; por su parte, antes de 1999 había una política monetaria más laxa si la inflación de mediano plazo estaba en su objetivo que después de tal año. Así, la regla de Taylor refleja un cambio en la visión para estabilizar la economía más allá de la coyuntura inmediata (aunque cabe señalar que en ambos casos se es más restrictivo en el mediano plazo que en el mediano plazo).
+
+El argumento anterior se refleja en que el coeficiente sobre el regresor que tiene a la inflación subyacente es hasta 9 veces mayor que el coeficiente correspondiente al hacer una regresión sobre la inflación (todo esto en los modelos significantes, aunque el resultado se mantiene en el modelo que dejamos de lado, si bien en magnitud menor).
+
+
+Por último, cabe señalar que después de 1999 la variación de la tasa de interés de corto plazo se explica en un 63% al tomar a la inflación de mediano plazo, pero sólo en un 5% en el período previo. Esto continua en línea con los argumentos ya expuestos: que no solamente se decidió hacer política monetaria con objetivos de inflación, sino que además se integró el horizonte de mediano plazo en la toma de decisiones.
+
+
+
+
+\newpage
 **3) Estudie el efecto de cambios en la tasa de interés de México sobre la curva de tasas de interés: [2 horas, 1.5 puntos cada inciso]. Por favor documente su trabajo para que se pueda replicar.**
 
 **(a) Obtenga datos de la tasa de interés de referencia del Banco de México, y datos de las tasas de interés en pesos a distintos plazos, 28 días, 1 año, 2 años, 5 años, 10 años. Nótese que están disponibles en distintos periodos cada una.**
