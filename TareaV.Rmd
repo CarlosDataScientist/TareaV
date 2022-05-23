@@ -4,7 +4,194 @@ output: pdf_document
 
 **Esta tarea es para “crédito adicional”. Realice los siguientes ejercicios por equipo.**
 
-**1. Resuelva los ejercicios 12.2 y 12.3. Realice estos con ayuda de su laboratorista y entregue las soluciones a máquina, utilizando LateX [2 horas, 2 puntos cada ejercicio]**
+\setcounter{page}{1}
+\section{}
+\textbf{1. Resuelva los ejercicios 12.2 y 12.3. Realice estos con ayuda de su labora- torista y entregue las soluciones a máquina, utilizando LaTeX. [2 horas, 2 puntos cada ejercicio]}\\
+\subsection{(12.2)}
+\textbf{Consider a discrete-time model where prices are completely unresponsive to unanticipated monetary shocks for one period and completely flexible thereafter. Suppose the $IS$ equation is $y=c-ar$ and that the condition for equilibrium in the money market is $m-p=b+hy-ki$. Here $y$, $m$, and $p$ are the logs of output, the money supply, and the price level; $r$ is the real interest rate; $i$ is the nominal interest rate; and $a$, $h$, and $k$ are positive parameters.}
+
+
+\textbf{Assume that initially $m$ is constant at some level, which we normalize to zero, and that $y$ is constant at its flexible-price level, which we also normalize to zero. Now suppose that in some period–period 1 for simplicity–the monetary authority shifts unexpectedly to a policy of increasing $m$ by some amount $g>0$ each period.}
+\subsubsection*{(a) What are $r$, $\pi^e$, $i$, and $p$ before the change in policy?}
+\begin{align}
+y&=c-ar\\
+m-p&=b+hy-ki
+\end{align}
+Sustituyendo el valor inicial de $m$ y $y$ (ambos cero), obtenemos 
+\begin{align}
+0&=c-ar\nonumber\\
+\iff r&=\frac{c}{a}
+\end{align}
+\begin{align}
+0-p&=b+h(0)-ki\nonumber\\
+\iff p&=ki-b
+\end{align}
+Supongamos que $\pi^e$ es igual a la inflación observada. En este caso, como $m=0$, entonces 
+\begin{equation}
+\pi^e=0
+\end{equation}
+Y por lo tanto, usando la identidad de Fisher, 
+\begin{equation}
+i=r+\pi^e=r=\frac{c}{a}
+\end{equation}
+Sustituyendo (6) en (4)
+\begin{align}
+p=k\frac{c}{a}-b:=p_0
+\end{align}
+
+\subsubsection*{(b) Once prices have fully adjusted, $\pi^e=g$. Use this fact to find $r$, $i$, and $p$ in period 2.}
+$M$ no afecta $Y$ o $r$. Entonces, en el periodo 2,
+\begin{align*}
+r=\frac{c}{a}
+\end{align*}
+Tenemos que
+$$\pi^e=g$$
+Por lo tanto,
+$$i=r+g=\frac{c}{a}+g$$
+Como $m$ crece a tasa $g$, en el periodo 1, $m=g$, y en el periodo 2, $m=2g$. Sustituyendo en (2) y usando que $y=0$,
+\begin{align*}
+2g-p&=b+h(0)-ki=b-ki\\
+\implies p&=2g-b+ki\\
+&=2g-b+k\left(\frac{c}{a}+g\right)\\
+&=g(2+k)-b+k\frac{c}{a}:=p_2
+\end{align*}
+\subsubsection*{(c) In period 1, what are $i$, $r$, $p$, and the expectation of inflation from period 1 to period 2, $\mathbb{E}_1[p_2]-p_1$?}
+Como los precios no responden en absoluto a los shocks monetarios inesperados durante un período, el precio en el periodo 1 no cambia con respecto al precio inicial
+\begin{align}
+p=k\frac{c}{a}-b:=p_1
+\end{align}
+Recordemos que la inflación esperada es la inflación observada. Entonces tenemos simplemente que 
+\begin{align}
+\mathbb{E}_1[p_2]-p_1&=p_2-p_1\nonumber\\
+&=g(2+k)-b+k\frac{c}{a}-\left(k\frac{c}{a}-b\right)\nonumber\\
+&=g(2+k):=\pi_1^e
+\end{align}
+Entonces
+\begin{align}
+i_1=r_1+\pi_1^e=r+g(2+k)
+\end{align}
+Sustituyendo (1) en (2)
+\begin{align}
+m-p&=b+h(c-ar)-ki
+\end{align}
+Sustituyendo (8) y (10) en (11), y usando que $m_1=g$, obtenemos que 
+\begin{align}
+g-\left(k\frac{c}{a}-b\right)&=b+h(c-ar)-k(r+g(2+k))\nonumber\\
+\iff g-k\frac{c}{a}&=h(c-ar)-k(r+g(2+k))\nonumber\\
+\iff g-k\frac{c}{a}&=hc-kg(2+k)-(ha+k)r\nonumber\\
+\iff r&=\frac{hc-kg(2+k)-g+k\frac{c}{a}}{ha+k}
+\end{align}
+Y finalmente tenemos que 
+\begin{align}
+i_1&=\frac{hc-kg(2+k)-g+k\frac{c}{a}}{ha+k}+g(2+k)\nonumber\\
+&=\frac{hc-kg(2+k)-g+k\frac{c}{a}+g(2+k)(ha+k)}{ha+k}\nonumber\\
+&=\frac{hc-g+k\frac{c}{a}+g(2+k)ha}{ha+k}
+\end{align}
+
+\subsubsection*{(d) What determines whether the short-run effect of the monetary expansion is to raise or lower the nominal interest rate?}
+\begin{align}
+i_1-i_0&=\frac{hc-g+k\frac{c}{a}+g(2+k)ha}{ha+k}-\frac{c}{a}\nonumber\\
+&=\frac{ahc-ag+ak\frac{c}{a}+ag(2+k)ha-c(ha+k)}{a(ha+k)}\nonumber\\
+&=\frac{ahc-ag+kc+g(2+k)ha^2-c(ha+k)}{a(ha+k)}\nonumber\\
+&=\frac{g(2+k)ha^2-ag}{a(ha+k)}\nonumber\\
+&=\frac{g(2+k)ha-g}{ha+k}>0\nonumber\\
+\iff (2+k)ha&>1\nonumber\\
+\end{align}
+
+\cleardoublepage
+\setcounter{equation}{0}
+\subsection{(12.3)}
+\textbf{Assume, as in Problem 12.2, that prices are completely unresponsive to unanticipated monetary shocks for one period and completely flexible thereafter. Assume also that $y=c-ar$ and $m-p=b+hy-ki$ hold each period. Suppose, however, that the money supply follows a random walk: $m_t=m_{t-1}+u_t$, where $u_t$ is a mean-zero, serially uncorrelated disturbance.} 
+
+\subsubsection*{(a) Let $\mathbb{E}_t$ denote expectations as of period $t$. Explain why, for any $t$, $\mathbb{E}_t[\mathbb{E}_{t+1}[p_{t+2}]-p_{t+1}]=0$, and thus why $\mathbb{E}_tm_{t+1}-\mathbb{E}_tp_{t+1}=b+hy^n-kr^n$, where $y^n$ and $r^n$ are the flexible-price levels of $y$ and $r$.}
+\begin{align}
+\mathbb{E}_t[\mathbb{E}_{t+1}[p_{t+2}]-p_{t+1}]&=\mathbb{E}_t[\mathbb{E}_{t+1}[p_{t+2}]]-\mathbb{E}_t[p_{t+1}]\nonumber\\
+&=\mathbb{E}_t[p_{t+2}]-\mathbb{E}_t[p_{t+1}]\nonumber\\
+&=0
+\end{align}
+La ultima igualdad sigue de que como $\mathbb{E}_t(u_{t+1})=0$, no se espera, en $t$, que el precio cambie entre $t+1$ y $t+2$.
+
+Por otro lado,
+\begin{align}
+\mathbb{E}_t(m_{t+1})-\mathbb{E}_t(p_{t+1})&=\mathbb{E}_t(m_{t+1}-p_{t+1})\nonumber\\
+&=\mathbb{E}_t(b+hy_{t+1}-ki_{t+1})\nonumber\\
+&=\mathbb{E}_t[b+hy_{t+1}-k(r_{t+1}+\pi_{t+1}^e)]\nonumber\\
+&=\mathbb{E}_t[b+hy_{t+1}-kr_{t+1}-k(\mathbb{E}_{t+1}(p_{t+2})-p_{t+1})]\nonumber\\
+&=b+h\mathbb{E}_t(y_{t+1})-k\mathbb{E}_t(r_{t+1})-k\mathbb{E}_t(\mathbb{E}_{t+1}(p_{t+2})-p_{t+1})\nonumber\\
+&=b+h\mathbb{E}_t(y_{t+1})-k\mathbb{E}_t(r_{t+1})\nonumber\\
+&=b+hy^n-kr^n
+\end{align}
+
+\subsubsection*{(b) Use the result in part (a) to solve for $y_t$, $p_t$, $i_t$, and $r_t$ in terms of $m_{t-1}$ and $u_t$.}
+Tenemos que 
+\begin{align}
+\mathbb{E}_t(m_{t+1})&=\mathbb{E}_t(m_t+u_{t+1})\nonumber\\
+&=m_t+\mathbb{E}_t(u_{t+1})\nonumber\\
+&=m_t
+\end{align}
+Sustituyendo en (2) y reordenando
+\begin{align}
+\mathbb{E}_t(p_{t+1})&=m_t-b-hy^n+kr^n\nonumber\\
+\iff \mathbb{E}_t(p_{t+1})-p_t&=m_t-p_t-b-hy^n+kr^n\nonumber\\
+&=u_t
+\end{align}
+La ultima igualdad sigue porque el shock del periodo $t$ es la única fuente de variación de precios. Por lo tanto
+\begin{align}
+m_t&=m_{t-1}+u_t\nonumber\\
+&=m_{t-1}+m_t-p_t-b-hy^n+kr^n\nonumber\\
+\iff p_t&=m_{t-1}-b-hy^n+kr^n
+\end{align}
+Ahora
+\begin{align}
+m_t-p_t&=b+hy_t-ki_t\nonumber\\
+\iff i_t&=\frac{b+hy_t-(m_t-p_t)}{k}
+\end{align}
+Sustituyendo (5)
+\begin{align}
+i_t&=\frac{b+hy_t-(m_t-m_{t-1}+b+hy^n-kr^n)}{k}\nonumber\\
+&=\frac{h(y_t-y^n)-(m_t-m_{t-1})+kr^n}{k}\nonumber\\
+&=\frac{h(y_t-y^n)-u_t+kr^n}{k}
+\end{align}
+Tenemos que 
+\begin{align}
+r_t&=i_t-\pi^e_t\nonumber\\
+&=\frac{h(y_t-y^n)-u_t+kr^n}{k}-u_t
+\end{align}
+Sustituyendo en $y_t=c-ar_t$ obtenemos
+\begin{align}
+y_t&=c-a\frac{h(y_t-y^n)-u_t+kr^n}{k}+au_t\nonumber\\
+\iff y_t\left(1+\frac{ah}{k}\right)&=c-a\frac{-hy^n-u_t+kr^n}{k}+au_t\nonumber\\ 
+\iff y_t&=\frac{ck+a(hy^n+u_t-kr^n)+aku_t}{k+ah}\nonumber\\ 
+&=\frac{ck+a(hy^n+(1+k)u_t-kr^n)}{k+ah}
+\end{align}
+Por lo que la tasa de interés real será
+\begin{align}
+y_t&=c-ar_t\nonumber\\
+\iff r_t&=\frac{c-y_t}{a}\nonumber\\
+&=\frac{c-\left(\frac{ck+a(hy^n+(1+k)u_t-kr^n)}{k+ah}\right)}{a}\nonumber\\
+&=\frac{ck+cah-\left(ck+a(hy^n+(1+k)u_t-kr^n)\right)}{a(k+ah)}\nonumber\\
+&=\frac{cah-a(hy^n+(1+k)u_t-kr^n)}{a(k+ah)}\nonumber\\
+&=\frac{ch-(hy^n+(1+k)u_t-kr^n)}{k+ah}\nonumber\\
+&=\frac{h(c-y^n)-(1+k)u_t+kr^n}{k+ah}
+\end{align}
+Y finalmente, la tasa de intereses nominal es
+\begin{align}
+i_t&=r_t+\pi^e_t\nonumber\\
+&=r_t+u_t\nonumber\\
+&=\frac{h(c-y^n)-(1+k)u_t+kr^n}{k+ah}+u_t\nonumber\\
+&=\frac{h(c-y^n)-(1+k)u_t+kr^n+ku_t+ahu_t}{k+ah}\nonumber\\
+&=\frac{h(c-y^n)-u_t+kr^n+ahu_t}{k+ah}\nonumber\\
+&=\frac{h(c-y^n)+(ah-1)u_t+kr^n}{k+ah}\nonumber\\
+&=\frac{h(c-y^n)+(ah-1)\pi^e_t+kr^n}{k+ah}
+\end{align}
+
+\subsubsection*{(c) Does the Fisher effect hold in this economy? That is, are changes in expected inflation reflected one-for-one in the nominal interest rate?}
+No. Notemos que 
+\begin{align}
+\frac{\partial i_t}{\partial\pi^e_t}&=\frac{ah-1}{k+ah}=1\\
+\iff k&=-1\nonumber
+\end{align}
+Lo cual nunca sucede. Por lo que cambios en inflación esperada no afectan uno a uno la tasa de interés nominal. 
 
 **2. Estudie la inflación y la política monetaria en México siguiendo estos pasos: [2 horas, 1.5 puntos cada inciso]. Por favor documente su trabajo para que se pueda replicar.**
 
@@ -65,6 +252,7 @@ ds[,1] <- as.Date(paste(rep('01-',dim(ds)[1]),
                            as.data.frame(ds)[,1], sep = ''), 
                      '%d-%m-%Y')
 ds <- dplyr::arrange(ds, date)
+objetivo <- ds[,c(1,2)]
 
 #summary(ds)
 #var(ds, na.rm = T)
@@ -287,7 +475,7 @@ ggplot2::ggplot(data = ds.plot, ggplot2::aes(x = Fecha, y = Log, color = Agregad
 Para obtener la cantidad real de dinero se utilizó la ecuación cuantitativa del dinero desarrollada por Milton Friedman.
 
 $$
-P = \frac{Y_{\text{real}}}{Y_{nominal}} ; \hspace{2cm} \text{ Saldos Reales := }\frac{M}{P}
+P = \frac{Y_{\text{nominal}}}{Y_{real}} ; \hspace{2cm} \text{ Saldos Reales := }\frac{M}{P}
 $$
 Se utilizaron las series 494098 y 494782 del PIB real y nominal obtenidas del INEGI. Se presentan las gráficas.
 
@@ -301,7 +489,7 @@ Y <- dplyr::inner_join(Y_real, Y_nominal, by = 'date',
 P <-  dplyr::select(
     dplyr::mutate(
       dplyr::select(Y, date, values.real, values.nominal),
-    P = values.real / values.nominal),
+    P = values.nominal / values.real),
   date, P)
 ```
 
@@ -409,39 +597,165 @@ varianza <- var(ds.crec[,-1], na.rm = T)
 
 Table: Estadísticas descriptivas I
 
-|     date          |      M0         |      M1         |      M2         |
-|:------------------|:----------------|:----------------|:----------------|
-|Min.   :2001-07-01 |Min.   :-0.02281 |Min.   :-0.01155 |Min.   :-0.02146 |
-|1st Qu.:2006-07-24 |1st Qu.: 0.02086 |1st Qu.: 0.02372 |1st Qu.: 0.01828 |
-|Median :2011-08-16 |Median : 0.04083 |Median : 0.04013 |Median : 0.03548 |
-|Mean   :2011-08-16 |Mean   : 0.04380 |Mean   : 0.04248 |Mean   : 0.03425 |
-|3rd Qu.:2016-09-08 |3rd Qu.: 0.07311 |3rd Qu.: 0.06192 |3rd Qu.: 0.04856 |
-|Max.   :2021-10-01 |Max.   : 0.11247 |Max.   : 0.11546 |Max.   : 0.08853 |
-|                   |Var    : 0.00113 |Var    : 0.00074 |Var    : 0.00045 |
+|     date          |      M0          |      M1          |      M2          |
+|:------------------|:-----------------|:-----------------|:-----------------|
+|Min.   :2001-07-01 |Min.   :-0.037718 |Min.   :-0.033178 |Min.   :-0.032014 |
+|1st Qu.:2006-07-24 |1st Qu.:-0.003209 |1st Qu.:-0.002392 |1st Qu.:-0.002314 |
+|Median :2011-08-16 |Median : 0.008825 |Median : 0.008280 |Median : 0.009112 |
+|Mean   :2011-08-16 |Mean   : 0.019092 |Mean   : 0.017767 |Mean   : 0.009542 |
+|3rd Qu.:2016-09-08 |3rd Qu.: 0.038968 |3rd Qu.: 0.036906 |3rd Qu.: 0.020854 |
+|Max.   :2021-10-01 |Max.   : 0.125678 |Max.   : 0.119491 |Max.   : 0.082554 |
+|                   |Var    : 0.001094 |Var    : 0.001003 |Var    : 0.000417 |
 
 Table: Estadísticas descriptivas II
 
-|     date          |      M3         |      M4         |
-|:------------------|:----------------|:----------------|
-|Min.   :2001-07-01 |Min.   :-0.01773 |Min.   :-0.01844 |
-|1st Qu.:2006-07-24 |1st Qu.: 0.02183 |1st Qu.: 0.02086 |
-|Median :2011-08-16 |Median : 0.03612 |Median : 0.03565 |
-|Mean   :2011-08-16 |Mean   : 0.03515 |Mean   : 0.03659 |
-|3rd Qu.:2016-09-08 |3rd Qu.: 0.04555 |3rd Qu.: 0.04910 |
-|Max.   :2021-10-01 |Max.   : 0.08944 |Max.   : 0.08796 |
-|                   |Var    : 0.00035 |Var    : 0.00039 |
+|     date          |      M3          |      M4           |
+|:------------------|:-----------------|:------------------|
+|Min.   :2001-07-01 |Min.   :-0.034501 |Min.   :-0.0311920 |
+|1st Qu.:2006-07-24 |1st Qu.:-0.001858 |1st Qu.:-0.0008376 |
+|Median :2011-08-16 |Median : 0.012398 |Median : 0.0132841 |
+|Mean   :2011-08-16 |Mean   : 0.010440 |Mean   : 0.0118777 |
+|3rd Qu.:2016-09-08 |3rd Qu.: 0.020040 |3rd Qu.: 0.0274521 |
+|Max.   :2021-10-01 |Max.   : 0.077441 |Max.   : 0.0548779 |
+|                   |Var    : 0.000391 |Var    : 0.0004113 |
 
 Notar que el crecimiento de la media, la varianza y cuartiles va a aumentando conforme se van sumando los agregados algo que esperamos por la construcción de los indicadores. 
 
 
 **(d) Explique en qué medida el dinero parece comportarse o no de acuerdo a la teoría económica, considerando la demanda de dinero como una función de la actividad económica, los precios y la tasa de interés.**
 
-Utilizaremos la siguiente regresión para verificar si los saldos reales se comportan conforme a los esperado.
+Utilizaremos la siguiente regresión con dos rezagos para verificar si los saldos reales se comportan conforme a los esperado.
 
 $$
-\Delta \frac{\text{M}_{i \epsilon\{0,1,2,3,4\}}}{\text{P}} = \alpha + \beta_1\Delta \text{Y}_{real} + \beta_2 \Delta \text{Tasa de objetivo}
+\Delta \frac{\text{M}_{t,i \epsilon\{0,1,2,3,4\}}}{\text{P}_t} = \alpha + \beta_1\Delta \text{Y}_{t-2,real} + \beta_2 \Delta \text{tasa}_{t-2, real}
 $$
 
 Esperamos que $\beta_1 > 0$ ; $\beta_2 < 0$ y que sean significativos para que los agregados monetarios tengan la dirección de la teoría económica. 
 
+```{r, echo=FALSE}
+# Y real
+Y_real.crec <- dplyr::select(
+  dplyr::mutate(
+    dplyr::arrange(
+      dplyr::select(Y_nominal, date, values),
+    date),
+  Y.crec = c(NA,diff(log(values)))),
+date, Y.crec
+)
+```
 
+```{r, echo=FALSE}
+Serie <- c('SF43936')
+Tasa <- 'CETES 28'
+```
+
+Se presenta parte del conjunto de datos que se construyó.
+
+```{r, echo=FALSE, message=FALSE}
+# Abrir sesión en API banxico
+tkn <- "8bd93af99a69ac4062f645fd43e0b517c5c88bb17750149a9fce21e47f8264af"
+siebanxicor::setToken(tkn)
+series <- siebanxicor::getSeriesData(Serie, '2000-07-01','2022-03-01')
+j = 1
+for (i in match(names(series),Serie)) {
+  a <- data.frame(series[[j]])
+  a[,1] <- format(a[,1], '%m-%Y')
+  a <- dplyr::ungroup(
+    dplyr::summarise(
+      dplyr::group_by(a,date),
+      tasa = mean(value, na.rm =T)
+    )
+  )
+  if (j == 1) {
+    ds <- a
+    colnames(ds) <- c('date' , Tasa[i])
+    j = j + 1
+    next
+  }
+  ds <- dplyr::full_join(ds, a, by = 'date')
+  j = j + 1
+  colnames(ds)[j] <- Tasa[i]
+}
+ds <- dplyr::select(ds, c('date', Tasa))
+ds[,1] <- as.Date(paste(rep('01-',dim(ds)[1]), 
+                           as.data.frame(ds)[,1], sep = ''), 
+                     '%d-%m-%Y')
+ds <- dplyr::arrange(ds, date)
+objetivo <- ds
+
+#summary(ds)
+#var(ds, na.rm = T)
+```
+
+
+```{r, echo=FALSE}
+# Tasa objetivo
+empieza <- as.character(objetivo$date)[1]
+termina <- as.character(objetivo$date)[dim(objetivo)[1]]
+inicio <- stringr::str_sub(empieza, 1, 4)
+fin <- stringr::str_sub(termina, 1, 4)
+anual <- paste(rep(inicio:fin, each = 12), 
+                   c(paste(0, 1:9, sep = ''), 10:12), 
+                   '01', sep = '-')
+trimestre <- paste(rep(inicio:fin, each = 12), 
+                   rep(c('01', '04', '07', '10'), each = 3), 
+                   '01', sep = '-')[match(empieza, anual):match(termina, anual)]
+objetivo.crec <- dplyr::select(
+  dplyr::mutate(
+    dplyr::ungroup(
+      dplyr::summarise(
+        dplyr::group_by(
+          dplyr::mutate(objetivo, date = as.Date(trimestre)),
+        date),
+      tasa = mean(`CETES 28`))),
+    tasa = c(NA,diff(log(tasa)))),
+  date, tasa
+)
+```
+
+```{r, echo=FALSE}
+ds.reg <- tidyr::drop_na(
+  dplyr::select(
+  dplyr::mutate(
+  dplyr::inner_join(
+  dplyr::inner_join(ds.crec, Y_real.crec, by = 'date'),
+  objetivo.crec, by = 'date'),
+  Y.crec = dplyr::lead(Y.crec,2),
+  tasa = dplyr::lead(tasa,2)),
+  M0:tasa)
+)
+
+nombres <- c('M0', 'M1', 'M2', 'M3', 'M4')
+for (i in 1:5) {
+  reg.2 <- regresion(datos = ds.reg,
+                     dependiente = i, 
+                     independiente = c(6,7), 
+                     nombre.regresion = nombres[i])
+  if (i == 1) {
+    regs <- reg.2
+    next
+  }
+  regs <- rbind(regs, reg.2)
+}
+
+#knitr::kable(regs)
+```
+
+Table: Regresión demanda de dinero
+
+|    | alpha| Y.crec|   tasa|     R|
+|:---|-----:|------:|------:|-----:|
+|M0  | 0.014|  0.250*| -0.088*| 0.153|
+|s.e | 0.004|  0.084|  0.034|   |
+|M1  | 0.013|  0.255*| -0.075*| 0.152|
+|s.e | 0.004|  0.081|  0.033|   |
+|M2  | 0.007|  0.152*| -0.064*| 0.176|
+|s.e | 0.002|  0.051|  0.021|   |
+|M3  | 0.008|  0.131*| -0.065*| 0.166|
+|s.e | 0.002|  0.050|  0.020|   |
+|M4  | 0.010|  0.110*| -0.067*| 0.149|
+|s.e | 0.002|  0.052|  0.021|   |
+
+$^*$Significativo al 95% (t $\geq$ 1.98)
+
+Los estimadores tienen la dirección esperada, así mismo son significativos al 95%. Notemos como el efecto disminuye mientras se suman los agregados monetarios. Los saldos reales se comportan conforme la teoría. 
