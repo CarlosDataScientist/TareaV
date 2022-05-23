@@ -116,9 +116,9 @@ Notemos que la varianza disminuye de acuerdo al plazo para los bonos del gobiern
 Realizamos la siguiente regresión lineal. 
 
 $$
-\text{Tasa}_{plazo} = 
+\Delta \text{Tasa}_{plazo} = 
 \alpha+
-\beta_1\text{Tasa de objetivo}+
+\beta_1 \Delta \text{Tasa de objetivo}+
 u
 $$
 
@@ -283,6 +283,118 @@ ggplot2::ggplot(data = ds.plot, ggplot2::aes(x = Fecha, y = Log, color = Agregad
 ```
 
 **(b) Obtenga el PIB nominal, y calcule la “cantidad real de dinero” M0,M1, M2,M3,M4 en México y grafique las tasas de crecimiento de los distintos tipos de dinero, todo a frecuencia trimestral.**
+
+Para obtener la cantidad real de dinero se utilizó la ecuación cuantitativa del dinero desarrollada por Milton Friedman.
+
+$$
+P = \frac{Y_{\text{real}}}{Y_{nominal}} ; \hspace{2cm} \text{ Saldos Reales := }\frac{M}{P}
+$$
+Se utilizaron las series 494098 y 494782 del PIB real y nominal obtenidas del INEGI. Se presentan las gráficas.
+
+```{r, echo=FALSE}
+# Generar el coeficiente P
+tkn <- '09dae22b-d57a-53f7-48e6-a83c20ccb313'
+Y_real <- inegiR::inegi_series(token = tkn, series_id = '494098')
+Y_nominal <- inegiR::inegi_series(token = tkn, series_id = '494782')
+Y <- dplyr::inner_join(Y_real, Y_nominal, by = 'date', 
+                       suffix = c('.real', '.nominal'))
+P <-  dplyr::select(
+    dplyr::mutate(
+      dplyr::select(Y, date, values.real, values.nominal),
+    P = values.real / values.nominal),
+  date, P)
+```
+
+```{r, echo=FALSE}
+# Generar agregados trimestrales
+n <- ceiling((dim(ds)[1]-1)/4)
+years <- c(2000,rep(c(2001:(ceiling(n/3)+2000)), each = 12))
+cuenta <- c('10-01', 
+            rep(c('01-01','04-01', '07-01', '10-01'),
+                each = 3, length(years)/12))
+trimestre <- paste(years, cuenta, sep = '-')[1:(n*4)]
+ds.trimestre <- dplyr::ungroup(
+  dplyr::summarise(
+    dplyr::group_by(
+      dplyr::mutate(ds, date = as.Date(trimestre)), 
+    date),
+  M0 = mean(M0),
+  M1 = mean(M1),
+  M2 = mean(M2),
+  M3 = mean(M3),
+  M4 = mean(M4))
+)
+```
+
+```{r, echo=FALSE}
+# Calcular crecimientos reales
+ds.crec <- dplyr::select(
+    dplyr::mutate(
+      dplyr::arrange(
+        dplyr::inner_join(P, ds.trimestre, by = 'date'),
+      date),
+    M0 = c(NA, diff(log(M0 / P))),
+    M1 = c(NA, diff(log(M1 / P))),
+    M2 = c(NA, diff(log(M2 / P))),
+    M3 = c(NA, diff(log(M3 / P))),
+    M4 = c(NA, diff(log(M4 / P)))),
+  date, M0, M1, M2, M3, M4
+)[4:dim(ds.trimestre)[1],]
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# Generar las gráficas
+plot.1 <- ggplot2::ggplot(ds.crec, 
+                ggplot2::aes(x = date, y = M0)) +
+        ggplot2::geom_line() +
+        ggplot2::labs(
+        title = 'Saldos monetarios reales M0.',
+        subtitle = 'Crecimientos calculados con logaritmos.',
+        x = 'Año',
+        y = 'Crecimientos',
+        caption = 'Elabración propia con datos del SIE Banxico e INEGI.')
+plot.2 <- ggplot2::ggplot(ds.crec, 
+                ggplot2::aes(x = date, y = M1)) +
+        ggplot2::geom_line() +
+        ggplot2::labs(
+        title = 'Saldos monetarios reales M1.',
+        subtitle = 'Crecimientos calculados con logaritmos.',
+        x = 'Año',
+        y = 'Crecimientos',
+        caption = 'Elabración propia con datos del SIE Banxico e INEGI.')
+plot.3 <- ggplot2::ggplot(ds.crec, 
+                ggplot2::aes(x = date, y = M2)) +
+        ggplot2::geom_line() +
+        ggplot2::labs(
+        title = 'Saldos monetarios reales M2.',
+        subtitle = 'Crecimientos calculados con logaritmos.',
+        x = 'Año',
+        y = 'Crecimientos',
+        caption = 'Elabración propia con datos del SIE Banxico e INEGI.')
+plot.4 <- ggplot2::ggplot(ds.crec, 
+                ggplot2::aes(x = date, y = M3)) +
+        ggplot2::geom_line() +
+        ggplot2::labs(
+        title = 'Saldos monetarios reales M3.',
+        subtitle = 'Crecimientos calculados con logaritmos.',
+        x = 'Año',
+        y = 'Crecimientos',
+        caption = 'Elabración propia con datos del SIE Banxico e INEGI.')
+plot.5 <- ggplot2::ggplot(ds.crec, 
+                ggplot2::aes(x = date, y = M4)) +
+        ggplot2::geom_line() +
+        ggplot2::labs(
+        title = 'Saldos monetarios reales M4.',
+        subtitle = 'Crecimientos calculados con logaritmos.',
+        x = 'Año',
+        y = 'Crecimientos',
+        caption = 'Elabración propia con datos del SIE Banxico e INEGI.')
+plot.1
+plot.2
+plot.3
+plot.4
+plot.5
+```
 
 **(c) Produzca una tabla de estadísticas descriptivas de las tasas de crecimiento de las distintas formas de dinero real, incluyendo medias y varianzas, para todo el periodo para el que tenga datos de cada variable.**
 
